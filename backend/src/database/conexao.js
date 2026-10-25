@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-import "dotenv/config";
+const mongoose = require("mongoose");
+require("dotenv").config();
 
-export function conectarBancoMongo() {
+function conectarBancoMongo() {
     const URI_BANCO = `mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}?authSource=${process.env.DB_USER}`;
 
     mongoose.connection.on("open", () => {
@@ -12,3 +12,5 @@ export function conectarBancoMongo() {
 
     return conexao;
 }
+
+module.exports = { conectarBancoMongo };

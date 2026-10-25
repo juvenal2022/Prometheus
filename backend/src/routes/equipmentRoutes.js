@@ -1,75 +1,77 @@
 const express = require('express');
 const router = express.Router();
-const Equipment = require('../models/equipmentModels');
+const equipmentService = require('../services/equipmentService');
 
-// 1. Cadastrar Equipamento
+// Cadastrar
 router.post('/', async (req, res) => {
   try {
-    const equipment = new Equipment(req.body);
-    const savedEquipment = await equipment.save();
-    res.status(201).json(savedEquipment);
+    const saved = await equipmentService.create(req.body);
+    res.status(201).json(saved);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// 2. Listar Equipamentos (Com suporte a filtros por tipo, bairro, situação e manutenção)
+// Listar (com filtros)
 router.get('/', async (req, res) => {
   try {
-    const { tipo, bairro, situacao, manutencaoImediata } = req.query;
-    let filter = {};
-
-    if (tipo) filter.tipo = tipo;
-    if (bairro) filter['localizacao.bairro'] = new RegExp(bairro, 'i'); // Busca aproximada
-    if (situacao) filter.situacao = situacao;
-    if (manutencaoImediata === 'true') filter['manutencao.necessidade'] = 'imediata';
-
-    const equipments = await Equipment.find(filter) || [];
-    res.json(equipments);
+    const items = await equipmentService.getAll(req.query);
+    res.json(items);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 3. Buscar Equipamento por ID
+// Obter por ID
 router.get('/:id', async (req, res) => {
   try {
-    const equipment = await Equipment.findById(req.params.id);
-    if (!equipment) return res.status(404).json({ error: 'Equipamento não encontrado' });
-    res.json(equipment);
+    const item = await equipmentService.getById(req.params.id);
+    if (!item) return res.status(404).json({ error: 'Equipamento não encontrado' });
+    res.json(item);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-// 4. Atualizar Situação ou Status de Manutenção (PATCH rápido)
+// Alterar Status (PATCH)
 router.patch('/:id/status', async (req, res) => {
   try {
-    const { situacao, manutencao } = req.body;
-    let updateData = {};
-    if (situacao) updateData.situacao = situacao;
-    if (manutencao) updateData.manutencao = manutencao;
-
-    const updated = await Equipment.findByIdAndUpdate(
-      req.params.id, 
-      { $set: updateData }, 
-      { new: true }
-    );
+    const updated = await equipmentService.update(req.params.id, req.body);
     if (!updated) return res.status(404).json({ error: 'Equipamento não encontrado' });
-    res.json(updated);
+    res.json({ message: 'Status atualizado com sucesso!', updated });
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 });
 
-// 5. Deletar Equipamento
+// Excluir
 router.delete('/:id', async (req, res) => {
   try {
-    const deleted = await Equipment.findByIdAndDelete(req.params.id);
+    const deleted = await equipmentService.delete(req.params.id);
     if (!deleted) return res.status(404).json({ error: 'Equipamento não encontrado' });
     res.json({ message: 'Equipamento removido com sucesso' });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+// Rota de Alertas Críticos
+router.get('/alertas/criticos', async (req, res) => {
+  try {
+    const alertas = await equipmentService.getCriticalAlerts();
+    res.json({ total: alertas.length, alertas });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+// Rota de Simulação
+router.post('/simular/incidente', async (req, res) => {
+  try {
+    const afetado = await equipmentService.simulateIncident();
+    res.json({ message: '🚨 Incidente simulado com sucesso!', equipamentoAfetado: afetado });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 });
 

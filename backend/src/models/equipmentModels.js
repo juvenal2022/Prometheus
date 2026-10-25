@@ -12,14 +12,14 @@ const equipmentSchema = new mongoose.Schema({
     rua: { type: String, required: true },
     referencia: String, // ex: "oposto ao número 181", "KM 203"
     gps: {
-      latitude: { type: Number, required: true },
-      longitude: { type: Number, required: true }
+      latitude: { type: Number},
+      longitude: { type: Number}
     }
   },
   situacao: { 
     type: String, 
     enum: ['ainda não instalado', 'operacional', 'mau funcionamento', 'desativado', 'furtado'],
-    default: 'ainda não instalado'
+    default: 'operacional'
   },
   manutencao: {
     necessidade: { type: String, enum: ['imediata', 'agendada/periódica', 'nenhuma'], default: 'nenhuma' },
