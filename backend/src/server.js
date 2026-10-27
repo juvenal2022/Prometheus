@@ -7,6 +7,7 @@ const { conectarBancoMongo } = require('./database/conexao');
 
 const equipmentRoutes = require('./routes/equipmentRoutes');
 const agentRoutes = require('./routes/agentRoutes');
+const predictiveRoutes = require('./routes/predictiveRoutes');
 
 const app = express();
 
@@ -30,6 +31,7 @@ conectarBancoMongo()
 // Configuração das Rotas da API
 app.use('/api/equipments', equipmentRoutes);
 app.use('/api/agents', agentRoutes);
+app.use('/api/predictive', predictiveRoutes);
 
 app.get('/', (req, res) => {
   res.send('🔥 API do Projeto F.O.G.O. (Protocolo Prometheus) Rodando!');

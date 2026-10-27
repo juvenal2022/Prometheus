@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import 'leaflet/dist/leaflet.css';
 import MapaOperacional from './components/MapaOperacional';
+import DashboardPreditivo from './components/DashboardPreditivo';
 
 const API_URL = 'http://localhost:5000/api';
 
@@ -223,6 +224,7 @@ export default function App() {
             <button onClick={() => setTab('formEq')} className={`px-4 py-2 rounded transition ${tab === 'formEq' ? 'bg-red-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>+ Novo Equipamento</button>
             <button onClick={() => setTab('formAg')} className={`px-4 py-2 rounded transition ${tab === 'formAg' ? 'bg-red-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>+ Novo Agente</button>
             <button onClick={() => setTab('inventory')} className={`px-4 py-2 rounded transition ${tab === 'inventory' ? 'bg-red-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>Inventário ({equipments.length})</button>
+            <button onClick={() => setTab('inteligence')} className={`px-4 py-2 rounded transition ${tab === 'inteligence' ? 'bg-red-600 text-white' : 'bg-gray-700 hover:bg-gray-600'}`}>Inteligência Preditiva</button>
           </nav>
         </div>
       </header>
@@ -254,6 +256,7 @@ export default function App() {
                 </div>
               </div>
             </div>
+            {/* Mapa Operacional em Tempo Real */}
             <>
               <div className="space-y-4">
                 <h2 className="text-2xl font-semibold">Central de Operações (Mapa em Tempo Real)</h2>
@@ -510,6 +513,13 @@ export default function App() {
                 </tbody>
               </table>
             </div>
+          </div>
+        )}
+
+        {/* ABA INTELIGÊNCIA */}
+        {tab === 'inteligence' && (
+          <div className="space-y-4">
+            <DashboardPreditivo />
           </div>
         )}
       </main>
